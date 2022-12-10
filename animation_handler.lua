@@ -25,7 +25,7 @@ function init()
     --DebugPrint("bye")
 end
 
-function update(dt)
+function tick(dt)
 
     if InputPressed("o") then
         active = not active
@@ -79,12 +79,14 @@ function DeRegisterAnimation(name)
         for id=1, #ListKeys(framekey) do
             bodykey = framekey..".bodies.body"..id
             --DebugPrint(bodykey)
+            posEasing = GetString(bodykey..".posease")
+            rotEasing = GetString(bodykey..".rotease")
 
             pos = Vec(GetFloat(bodykey..".x"), GetFloat(bodykey..".y"), GetFloat(bodykey..".z"))
             rot = Quat(GetFloat(bodykey..".qx"), GetFloat(bodykey..".qy"), GetFloat(bodykey..".qz"), GetFloat(bodykey..".qw"))
             trans = Transform(pos, rot)
 
-            values[framenum][2][id] = trans
+            values[framenum][2][id] = {posEasing, rotEasing, trans}
             --DebugPrint(TransformStr(trans))
         end
     end
@@ -107,16 +109,20 @@ function animate(currentKeyframe, frametimer, dt, values, rig, repeating)
 
             for id, objectValues in ipairs(framevalues[2]) do
 
-                currentTrans = values[currentKeyframe][2][id]
-                nextTrans = values[currentKeyframe + 1][2][id]
+                currentTrans = values[currentKeyframe][2][id][3]
+                nextTrans = values[currentKeyframe + 1][2][id][3]
+
+                posEase = values[currentKeyframe][2][id][1]
+                rotEase = values[currentKeyframe][2][id][2]
+                DebugPrint(posEase)
 
                 SetBodyDynamic(rig[id], false)
 
                 startTrans = TransformToParentTransform(originTrans, currentTrans)
                 endTrans = TransformToParentTransform(originTrans, nextTrans)  
 
-                newPos = VecLerp(startTrans.pos, endTrans.pos, prog)
-                newRot = QuatSlerp(startTrans.rot, endTrans.rot, prog)
+                newPos = VecLerp(startTrans.pos, endTrans.pos, Interpolate(prog, posEase))
+                newRot = QuatSlerp(startTrans.rot, endTrans.rot, Interpolate(prog, rotEase))
 
                 SetBodyTransform(rig[id], Transform(newPos, newRot))
 
@@ -155,4 +161,48 @@ function animate(currentKeyframe, frametimer, dt, values, rig, repeating)
         
         return currentKeyframe, 0
     end
+end
+
+function Interpolate(t, style)
+    --mostly taken from easings.net
+
+    if style == "easeIn" then
+        t = t^4
+
+    elseif style == "easeOut" then
+        t = 1-((1-t)^4)
+
+    elseif style == "easeInOutSine" then
+        t = (math.cos(math.pi*(t-1)) + 1) / 2
+
+
+    elseif style == "easeInBack" then
+        c1 = 1.70158
+        c3 = c1 + 1
+        t = (c3*(t^3)) - (c1*(t^2))
+
+    elseif style == "easeOutBack" then
+        c1 = 1.70158
+        c3 = c1 + 1
+        t = 1 + (c3*((t-1)^3)) + (c1 * ((t-1)^2))
+
+    elseif style == "easeInOutBack" then
+
+        c1 = 1.70158
+        c2 = c1 * 1,525
+        if t < 0.5 then
+            t = (((2*t)^2) * ((c2+1)*2*t-c2))/2
+
+        else
+            t = (((2*t-2)^2) * ((c2+1)*(t*2-2)+c2)+2)/2
+        end
+    end
+
+    --idk
+    --t = t*((t-2)^2)
+
+    --t = (t^2)*((t-2)^2)
+    DebugPrint(t)
+
+    return t
 end
