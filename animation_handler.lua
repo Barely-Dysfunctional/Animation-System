@@ -1,6 +1,8 @@
 --TODO
 --speed
---some nice way to control this
+--fps
+--repeating
+
 
 function init()
     --DebugPrint("hi")
@@ -8,14 +10,19 @@ function init()
     bodies = FindBodies("id")
     rig = SortByID(bodies)
 
+    name = GetStringParam("name", "handler")
+    key = "level.animhandlers."..name
+    while HasKey(key) do
+        key = key.."(2)"
+    end
 
-    names = {"test", "test2", "test3"}
-    currentAnim = 1
-    values = DeRegisterAnimation(names[currentAnim])
+    SetString(key..".controls.animation", "none")
+    SetInt(key..".controls.change", 0)
+    --will change current animation into one specified in controls.animation
+    --0: do nothing, 1: change instantly, 2: change when animation ends, 3: change after current frame
 
 
-
-    active = false
+    currentAnim = "none"
     frame = 1
     timer = 0
     frametimer = 0
@@ -27,76 +34,67 @@ end
 
 function tick(dt)
 
-    if InputPressed("o") then
-        active = not active
-    end
+    DebugWatch("change registry", GetInt(key..".controls.change"))
+    changeValue = GetInt(key..".controls.change")
 
-    if InputPressed("i") then
-        currentAnim = currentAnim + 1
-        if currentAnim > #names then
-            currentAnim = 1
+    if changeValue ~= 0 then
+
+        if currentAnim == "none" then --make sure it always turns on instantly so it doesnt get stuck
+            currentAnim = GetString(key..".controls.animation")
+            SetInt(key..".controls.change", 0)
+
+        elseif changeValue == 1 then 
+            currentAnim = GetString(key..".controls.animation")
+            SetInt(key..".controls.change", 0)
+
+        elseif changeValue == 2 then
+            if frame >= #values then
+                currentAnim = GetString(key..".controls.animation")
+                SetInt(key..".controls.change", 0)
+            end
+
+        elseif changeValue == 3 then
+            if frametimer == 0 then
+                currentAnim = GetString(key..".controls.animation")
+                SetInt(key..".controls.change", 0)
+            end
+
         end
 
-        values = DeRegisterAnimation(names[currentAnim])
+        if currentAnim ~= "none" then
+            values = DeRegisterAnimation(currentAnim)
+        end
+
+        DebugPrint(name.." changed animation to "..currentAnim)
     end
     
-    if active then
-        timer = timer + dt
-        frametimer = frametimer + dt
+    --DebugWatch("currentanim registry", GetString(key..".controls.animation"))
+    --DebugWatch("currentanim handlerside", currentAnim)
 
-        frame, frametimer = animate(frame, frametimer, dt, values, rig, repeating)
-        DebugWatch("current animation", names[currentAnim])
-    end
-end
 
-function SortByID(bodies)
-    newTable = {}
-    for i=1, #bodies do
-        table.insert(newTable, 0)
-    end
 
-    for i, body in ipairs(bodies) do
-        id = tonumber(GetTagValue(body, "id"))
-        newTable[id] = body
-    end
-
-    return newTable
-end
-
-function DeRegisterAnimation(name)
-    values = {}
-
-    key = "level.animations."..name
-    --DebugPrint(key)
-
-    for framenum=1, #ListKeys(key..".frames") do
-        framekey = key..".frames.frame"..framenum
-        --DebugPrint(framekey)
-
-        time = GetFloat(framekey..".time")
-        values[framenum] = {time, {}}
-
-        for id=1, #ListKeys(framekey) do
-            bodykey = framekey..".bodies.body"..id
-            --DebugPrint(bodykey)
-            posEasing = GetString(bodykey..".posease")
-            rotEasing = GetString(bodykey..".rotease")
-
-            pos = Vec(GetFloat(bodykey..".x"), GetFloat(bodykey..".y"), GetFloat(bodykey..".z"))
-            rot = Quat(GetFloat(bodykey..".qx"), GetFloat(bodykey..".qy"), GetFloat(bodykey..".qz"), GetFloat(bodykey..".qw"))
-            trans = Transform(pos, rot)
-
-            values[framenum][2][id] = {posEasing, rotEasing, trans}
-            --DebugPrint(TransformStr(trans))
+    
+    if currentAnim ~= "none" then
+        
+        if frame >= #values and repeating then
+            frame = 1
         end
-    end
 
-    return values
+        if frame < #values then
+            timer = timer + dt
+            frametimer = frametimer + dt
+            frame, frametimer = animate(frame, frametimer, dt, values, rig, repeating)
+        end
+        --DebugWatch("current animation", currentAnim)
+        --DebugPrint(frame)
+    end
 end
+
+
 
 function animate(currentKeyframe, frametimer, dt, values, rig, repeating)
 
-    if currentKeyframe < #values then
+    --if currentKeyframe < #values then
         --DebugPrint(#values)
         framevalues = values[currentKeyframe]
         
@@ -114,7 +112,7 @@ function animate(currentKeyframe, frametimer, dt, values, rig, repeating)
 
                 posEase = values[currentKeyframe][2][id][1]
                 rotEase = values[currentKeyframe][2][id][2]
-                DebugPrint(posEase)
+                --DebugPrint(posEase)
 
                 SetBodyDynamic(rig[id], false)
 
@@ -139,9 +137,9 @@ function animate(currentKeyframe, frametimer, dt, values, rig, repeating)
             --DebugPrint("hi")
             frametimer = 0
             currentKeyframe = currentKeyframe + 1
-            if (currentKeyframe >= #values) and repeating then
-                currentKeyframe = 1
-            end
+            --if (currentKeyframe >= #values) and repeating then
+            --    currentKeyframe = 1
+            --end
         end
 
         DebugWatch("prog", prog)
@@ -153,14 +151,58 @@ function animate(currentKeyframe, frametimer, dt, values, rig, repeating)
 
         return currentKeyframe, frametimer
 
-    else
-        --SetBool(name..".active", false)
-        if repeating then
-            currentKeyframe = 1
-        end
-        
-        return currentKeyframe, 0
+    --else
+    --    if repeating then
+    --        currentKeyframe = 1
+    --    end
+    --    
+    --    return currentKeyframe, 0
+    --end
+end
+
+function SortByID(bodies)
+    local newTable = {}
+    for i=1, #bodies do
+        table.insert(newTable, 0)
     end
+
+    for i, body in ipairs(bodies) do
+        local id = tonumber(GetTagValue(body, "id"))
+        newTable[id] = body
+    end
+
+    return newTable
+end
+
+function DeRegisterAnimation(name)
+    local values = {}
+
+    local key = "level.animations."..name
+    --DebugPrint(key)
+
+    for framenum=1, #ListKeys(key..".frames") do
+        framekey = key..".frames.frame"..framenum
+        --DebugPrint(framekey)
+
+        local time = GetFloat(framekey..".time")
+        values[framenum] = {time, {}}
+
+        for id=1, #ListKeys(framekey) do
+            local bodykey = framekey..".bodies.body"..id
+            --DebugPrint(bodykey)
+            local posEasing = GetString(bodykey..".posease")
+            local rotEasing = GetString(bodykey..".rotease")
+
+            local pos = Vec(GetFloat(bodykey..".x"), GetFloat(bodykey..".y"), GetFloat(bodykey..".z"))
+            local rot = Quat(GetFloat(bodykey..".qx"), GetFloat(bodykey..".qy"), GetFloat(bodykey..".qz"), GetFloat(bodykey..".qw"))
+            local trans = Transform(pos, rot)
+
+            values[framenum][2][id] = {posEasing, rotEasing, trans}
+            --DebugPrint(TransformStr(trans))
+        end
+    end
+
+    return values
 end
 
 function Interpolate(t, style)
@@ -202,7 +244,7 @@ function Interpolate(t, style)
     --t = t*((t-2)^2)
 
     --t = (t^2)*((t-2)^2)
-    DebugPrint(t)
+    --DebugPrint(t)
 
     return t
 end
