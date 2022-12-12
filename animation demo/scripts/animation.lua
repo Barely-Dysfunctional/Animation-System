@@ -22,8 +22,18 @@ function init()
             id = tonumber(GetTagValue(body, "id"))
             --DebugPrint("id: "..id)
 
+            posEasing = GetTagValue(body, "posease")
+            if posEasing == "" then
+                posEasing = "linear"
+            end
+
+            rotEasing = GetTagValue(body, "rotease")
+            if rotEasing == "" then
+                rotEasing = "linear"
+            end
+
             trans = TransformToLocalTransform(GetBodyTransform(keyframe), GetBodyTransform(body))
-            values[framenum][2][id] = trans
+            values[framenum][2][id] = {posEasing, rotEasing, trans}
 
             --DebugPrint(TransformStr(trans))
             Delete(body)
@@ -32,9 +42,6 @@ function init()
     
     name = GetStringParam("name", "animation")
     RegisterAnimation(values, name)
-    --DebugPrint("---------------------------")
-    balls = DeRegisterAnimation(name)
-    --DebugPrint("bye")
 end
 
 function RegisterAnimation(values, name)
@@ -49,12 +56,15 @@ function RegisterAnimation(values, name)
         time = frame[1]
         SetFloat(framekey..".time", time)
 
-        for id, trans in ipairs(frame[2]) do
+        for id, bodyValues in ipairs(frame[2]) do
             bodykey = framekey..".bodies.body"..id
 
-            --horrible i know
+            SetString(bodykey..".posease", bodyValues[1])
+            SetString(bodykey..".rotease", bodyValues[2])
+
+            trans = bodyValues[3]
             SetFloat(bodykey..".x", trans.pos[1])
-            SetFloat(bodykey..".y", trans.pos[2])   
+            SetFloat(bodykey..".y", trans.pos[2])
             SetFloat(bodykey..".z", trans.pos[3])
             SetFloat(bodykey..".qx", trans.rot[1])
             SetFloat(bodykey..".qy", trans.rot[2])
@@ -62,35 +72,6 @@ function RegisterAnimation(values, name)
             SetFloat(bodykey..".qw", trans.rot[4])
         end
     end
-end
-
-function DeRegisterAnimation(name)
-    values = {}
-
-    key = "level.animations."..name
-    --DebugPrint(key)
-
-    for framenum=1, #ListKeys(key..".frames") do
-        framekey = key..".frames.frame"..framenum
-        --DebugPrint(framekey)
-
-        time = GetFloat(framekey..".time")
-        values[framenum] = {time, {}}
-
-        for id=1, #ListKeys(framekey) do
-            bodykey = framekey..".bodies.body"..id
-            --DebugPrint(bodykey)
-
-            pos = Vec(GetFloat(bodykey..".x"), GetFloat(bodykey..".y"), GetFloat(bodykey..".z"))
-            rot = Quat(GetFloat(bodykey..".qx"), GetFloat(bodykey..".qy"), GetFloat(bodykey..".qz"), GetFloat(bodykey..".qw"))
-            trans = Transform(pos, rot)
-
-            values[framenum][2][id] = trans
-            --DebugPrint(TransformStr(trans))
-        end
-    end
-
-    return values
 end
 
 function FindFrameBodies(framebody)

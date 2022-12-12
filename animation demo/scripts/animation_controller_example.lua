@@ -1,69 +1,47 @@
-timer = 0
+function init()
+    handlers = {"test", "test2"}
+    names = {"test", "test2", "test3"}
+    currentAnim = 1
+    currentHandler = 1
+    currentChange = 1
+end
 
-function tick(dt)
+function tick()
 
-    if InputPressed("i") then
-        SetBool("level.animations.jimbo.active", true)
-        SetBool("level.animations.bob.active", true)
-        SetBool("level.animations.george.active", true)
-        SetBool("level.animations.gleeb.active", true)
-        SetBool("level.animations.hank.active", true)
+    if InputPressed("o") then --activate
+        SetString("level.animhandlers."..handlers[currentHandler]..".controls.animation", names[currentAnim])
+        SetInt("level.animhandlers."..handlers[currentHandler]..".controls.change", currentChange)
+        active = true
     end
 
-    if InputPressed("o") then
-        SetBool("level.animations.jimbo.active", false)
-        SetBool("level.animations.bob.active", false)
-        SetBool("level.animations.george.active", false)
-        SetBool("level.animations.gleeb.active", false)
-        SetBool("level.animations.hank.active", false)
+    if InputPressed("l") then --deactivate
+        SetString("level.animhandlers."..handlers[currentHandler]..".controls.animation", "none")
+        SetInt("level.animhandlers."..handlers[currentHandler]..".controls.change", currentChange)
+        active = false
+    end
+    
+    if InputPressed("i") then --change animation
+        currentAnim = currentAnim + 1
+        if currentAnim > #names then
+            currentAnim = 1
+        end
+    end
+
+    if InputPressed("k") then --change handler
+        currentHandler = currentHandler + 1
+        if currentHandler > #handlers then
+            currentHandler = 1
+        end
     end
 
     if InputPressed("u") then
-        timeractive = not timeractive
-    end
-
-    if timeractive then
-        timer = timer + dt
-
-        if timer <= 4 then
-            SetBool("level.animations.jimbo.active", false)
-            SetBool("level.animations.bob.active", true)
-            SetBool("level.animations.george.active", false)
-            SetBool("level.animations.gleeb.active", true)
-            SetBool("level.animations.hank.active", false)
-        elseif timer <= 8 then
-            SetBool("level.animations.jimbo.active", true)
-            SetBool("level.animations.bob.active", false)
-            SetBool("level.animations.george.active", true)
-            SetBool("level.animations.gleeb.active", false)
-            SetBool("level.animations.hank.active", true)
-        elseif timer <= 12 then
-            SetBool("level.animations.jimbo.active", true)
-            SetBool("level.animations.bob.active", true)
-            SetBool("level.animations.george.active", false)
-            SetBool("level.animations.gleeb.active", false)
-            SetBool("level.animations.hank.active", true)
-        elseif timer <= 16 then
-            SetBool("level.animations.jimbo.active", false)
-            SetBool("level.animations.bob.active", false)
-            SetBool("level.animations.george.active", true)
-            SetBool("level.animations.gleeb.active", true)
-            SetBool("level.animations.hank.active", false)
-        elseif timer <= 20 then
-            SetBool("level.animations.jimbo.active", true)
-            SetBool("level.animations.bob.active", true)
-            SetBool("level.animations.george.active", true)
-            SetBool("level.animations.gleeb.active", true)
-            SetBool("level.animations.hank.active", true)
-        elseif timer <= 28 then
-            SetBool("level.animations.jimbo.active", false)
-            SetBool("level.animations.bob.active", false)
-            SetBool("level.animations.george.active", false)
-            SetBool("level.animations.gleeb.active", false)
-            SetBool("level.animations.hank.active", false)
-        else
-            timeractive = false
-            timer = 0
+        currentChange = currentChange + 1
+        if currentChange > 3 then
+            currentChange = 1
         end
     end
+
+    DebugWatch("currentanim", names[currentAnim])
+    DebugWatch("currenthandler", handlers[currentHandler])
+    DebugWatch("currentChange", currentChange)
 end

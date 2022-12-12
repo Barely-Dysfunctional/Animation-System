@@ -2,19 +2,20 @@
 	<environment template="sunset"/>
 	<script file="main.lua"/>
 	<script file="sandbox.lua"/>
+	<script file="MOD/scripts/animation_controller_example.lua"/>
 	<voxbox pos="-50.0 0.0 -50.0" size="1000 1 1000"/>
 	<voxbox pos="-1 0.1 -5" size="20 20 2" material="wood" color="0.7 0.5 0.3"/>
 	<spawnpoint pos="0 1 0" rot="0 180 0"/>
-	<script pos="39.3 3.0 17.2" rot="0.0 0.0 0.0" file="MOD/scripts/animation.lua" param2="name=test">
+	<script pos="39.3 3.0 26.8" rot="0.0 0.0 0.0" file="MOD/scripts/animation.lua" param2="name=test">
 		<body tags="frame time=1" pos="0.0" dynamic="false">
-			<body tags="id=1" pos="-2.5 0.0 0.6" dynamic="false">
+			<body tags="id=1 posease=easeInOutBack rotease=linear" pos="-2.5 0.0 0.6" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
 			<body tags="id=2" pos="-2.5 0.0 -2.6" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" size="15 30 20" color="0 1 0"/>
 			</body>
 		</body>
-		<body tags="frame time=1" pos="10.1 0.0 0.0" dynamic="false">
+		<body tags="frame time=2" pos="10.1 0.0 0.0" dynamic="false">
 			<body tags="id=1" pos="-2.5 0.0 6.7" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
@@ -23,7 +24,7 @@
 			</body>
 		</body>
 		<body tags="frame time=1" pos="30.0 0.0 0.0" dynamic="false">
-			<body tags="id=1" pos="-2.5 9.4 6.7" dynamic="false">
+			<body tags="id=1 posease=easeInOutBack" pos="-2.5 9.4 6.7" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
 			<body tags="id=2" pos="5.0 0.0 -2.6" rot="-90.0 -90.0 0.0" dynamic="false">
@@ -75,9 +76,9 @@
 		</body>
 		<body tags="end" pos="48.2 0.0 0.0" dynamic="false"/>
 	</script>
-	<script pos="39.3 3.0 -21.2" rot="0.0 0.0 0.0" file="MOD/scripts/animation.lua" param2="name=test3">
+	<script pos="39.3 3.0 -31.0" rot="0.0 0.0 0.0" file="MOD/scripts/animation.lua" param2="name=test3">
 		<body tags="frame time=1" pos="0.0" dynamic="false">
-			<body tags="id=1" pos="-2.5 0.0 0.6" dynamic="false">
+			<body tags="id=1 rotease=easeInOutBack" pos="-2.5 0.0 0.6" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
 			<body tags="id=2" pos="-2.5 0.0 -2.6" dynamic="false">
@@ -88,7 +89,7 @@
 			<body tags="id=1" pos="-2.5 0.0 0.6" rot="90.0 0.0 0.0" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
-			<body tags="id=2" pos="-2.5 0.0 -2.6" rot="0.0 -90.0 0.0" dynamic="false">
+			<body tags="id=2 rotease=easeIn" pos="-2.5 0.0 -2.6" rot="0.0 -90.0 0.0" dynamic="false">
 				<voxbox pos="0.0 0.0 0.0" rot="0.0 0.0 0.0" size="15 30 20" color="0 1 0"/>
 			</body>
 		</body>
@@ -96,12 +97,12 @@
 			<body tags="id=1" pos="-2.5 0.0 0.6" rot="180.0 0.0 0.0" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
-			<body tags="id=2" pos="-2.5 0.0 -2.6" rot="0.0 -180.0 0.0" dynamic="false">
+			<body tags="id=2 rotease=easeInOutBack" pos="-2.5 0.0 -2.6" rot="0.0 -180.0 0.0" dynamic="false">
 				<voxbox pos="0.0 0.0 0.0" rot="0.0 0.0 0.0" size="15 30 20" color="0 1 0"/>
 			</body>
 		</body>
 		<body tags="frame time=1" pos="38.6 0.0 0.0" dynamic="false">
-			<body tags="id=1" pos="-2.5 0.0 0.6" rot="-90.0 0.0 0.0" dynamic="false">
+			<body tags="id=1 rotease=easeInOutBack" pos="-2.5 4.3 0.6" rot="-90.0 0.0 0.0" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
 			<body tags="id=2" pos="-2.5 0.0 -2.6" rot="0.0 90.0 0.0" dynamic="false">
@@ -109,7 +110,7 @@
 			</body>
 		</body>
 		<body tags="frame time=1" pos="52.5 0.0 0.0" dynamic="false">
-			<body tags="id=1" pos="-2.5 0.0 0.6" dynamic="false">
+			<body tags="id=1 rotease=easeIn" pos="-2.5 0.0 0.6" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
 			<body tags="id=2" pos="-2.5 0.0 -2.6" dynamic="false">
@@ -118,22 +119,22 @@
 		</body>
 		<body tags="end" pos="48.2 0.0 0.0" dynamic="false"/>
 	</script>
-	<script pos="-14.6 0.1 25.6" rot="0.0 -90.0 0.0" file="MOD/scripts/animation_handler.lua">
+	<script pos="-14.6 0.1 25.6" rot="0.0 -90.0 0.0" file="MOD/scripts/animation_handler.lua" param0="name=test">
 		<body tags="origin" pos="0.0" dynamic="false">
 			<body tags="id=1" pos="-2.5 0.0 0.6" dynamic="false">
-				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
+				<voxbox rot="0.0 0.0 0.0" color="0.39 0.83 0.1"/>
 			</body>
 			<body tags="id=2" pos="-2.5 0.0 -2.6" dynamic="false">
-				<voxbox rot="0.0 0.0 0.0" size="15 30 20" color="0 1 0"/>
+				<voxbox rot="0.0 0.0 0.0" size="15 300 20" color="0.0 0.12 0.3"/>
 			</body>
 		</body>
 	</script>
-	<script pos="6.6 0.1 25.6" rot="0.0 -90.0 0.0" file="MOD/scripts/animation_handler.lua">
+	<script pos="6.6 0.1 25.6" rot="0.0 -90.0 0.0" file="MOD/scripts/animation_handler.lua" param0="name=test2">
 		<body tags="origin" pos="0.0" dynamic="false">
-			<body tags="id=1" pos="-2.5 0.0 0.6" dynamic="false">
+			<body tags="id=2" pos="-2.5 0.0 0.6" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" color="1 0 0"/>
 			</body>
-			<body tags="id=2" pos="-2.5 0.0 -2.6" dynamic="false">
+			<body tags="id=1" pos="-2.5 0.0 -2.6" dynamic="false">
 				<voxbox rot="0.0 0.0 0.0" size="15 30 20" color="0 1 0"/>
 			</body>
 		</body>
