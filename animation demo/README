@@ -1,0 +1,11 @@
+controls:
+
+[I] change animation
+[K] change target animationhandler
+[U] change confirmation method
+    1: change animation instantly
+    2: change animation after current animation is finished
+    3: change animation after current frame is finished
+
+[O] confirm animation to handler using chosen confirmation method
+[L] stop animation of target animationhandler
