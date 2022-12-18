@@ -187,7 +187,7 @@ function DeRegisterAnimation(name)
         local time = GetFloat(framekey..".time")
         values[framenum] = {time, {}}
 
-        for id=1, #ListKeys(framekey) do
+        for id=1, #ListKeys(framekey..".bodies") do
             local bodykey = framekey..".bodies.body"..id
             --DebugPrint(bodykey)
             local posEasing = GetString(bodykey..".posease")
