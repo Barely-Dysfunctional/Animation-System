@@ -12,8 +12,12 @@ function init()
 
     name = GetStringParam("name", "handler")
     key = "level.animhandlers."..name
-    while HasKey(key) do
-        key = key.."(2)"
+    if HasKey(key) then
+        num = 2
+        while HasKey(key..num) do
+            num = num + 1
+        end
+        key = key..num
     end
 
     SetString(key..".controls.animation", "none")
@@ -65,7 +69,7 @@ function tick(dt)
             values = DeRegisterAnimation(currentAnim)
         end
 
-        DebugPrint(name.." changed animation to "..currentAnim)
+        --DebugPrint(name.." changed animation to "..currentAnim)
     end
     
     --DebugWatch("currentanim registry", GetString(key..".controls.animation"))
@@ -142,11 +146,11 @@ function animate(currentKeyframe, frametimer, dt, values, rig, repeating)
             --end
         end
 
-        DebugWatch("prog", prog)
-        DebugWatch("currentKeyframe", currentKeyframe)
-        DebugWatch("frametimer", frametimer)
-        DebugWatch("frametime", frametime)
-        DebugWatch("timer", timer)
+        --DebugWatch("prog", prog)
+        --DebugWatch("currentKeyframe", currentKeyframe)
+        --DebugWatch("frametimer", frametimer)
+        --DebugWatch("frametime", frametime)
+        --DebugWatch("timer", timer)
         
 
         return currentKeyframe, frametimer
