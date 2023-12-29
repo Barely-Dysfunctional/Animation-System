@@ -1,3 +1,5 @@
+name = GetStringParam("name", "animation")
+
 function init()
 
     values = {}
@@ -40,7 +42,6 @@ function init()
         end
     end
     
-    name = GetStringParam("name", "animation")
     RegisterAnimation(values, name)
 end
 

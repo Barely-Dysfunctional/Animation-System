@@ -2,7 +2,7 @@
 --speed
 --fps
 --repeating
-
+name = GetStringParam("name", "handler")
 
 function init()
     --DebugPrint("hi")
@@ -10,7 +10,6 @@ function init()
     bodies = FindBodies("id")
     rig = SortByID(bodies)
 
-    name = GetStringParam("name", "handler")
     key = "level.animhandlers."..name
     if HasKey(key) then
         num = 2
