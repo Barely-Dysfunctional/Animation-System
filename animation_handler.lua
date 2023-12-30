@@ -41,41 +41,11 @@ function tick(dt)
     changeValue = GetInt(key..".controls.change")
 
     if changeValue ~= 0 then
-
-        if currentAnim == "none" then --make sure it always turns on instantly so it doesnt get stuck
-            currentAnim = GetString(key..".controls.animation")
-            SetInt(key..".controls.change", 0)
-
-        elseif changeValue == 1 then 
-            currentAnim = GetString(key..".controls.animation")
-            SetInt(key..".controls.change", 0)
-
-        elseif changeValue == 2 then
-            if frame >= #values then
-                currentAnim = GetString(key..".controls.animation")
-                SetInt(key..".controls.change", 0)
-            end
-
-        elseif changeValue == 3 then
-            if frametimer == 0 then
-                currentAnim = GetString(key..".controls.animation")
-                SetInt(key..".controls.change", 0)
-            end
-
-        end
-
-        if currentAnim ~= "none" then
-            values = DeRegisterAnimation(currentAnim)
-        end
-
-        --DebugPrint(name.." changed animation to "..currentAnim)
+        updateAnimation(changeValue)
     end
     
     --DebugWatch("currentanim registry", GetString(key..".controls.animation"))
     --DebugWatch("currentanim handlerside", currentAnim)
-
-
-
     
     if currentAnim ~= "none" then
         
@@ -93,6 +63,42 @@ function tick(dt)
     end
 end
 
+function updateAnimation(value)
+
+    --if no animation playing, change instantly regardless of changevalue
+    if currentAnim == "none" then
+        currentAnim = GetString(key..".controls.animation")
+        SetInt(key..".controls.change", 0)
+
+    --1: change instantly, 
+    elseif value == 1 then 
+        currentAnim = GetString(key..".controls.animation")
+        SetInt(key..".controls.change", 0)
+
+    --2: change when animation ends, 
+    elseif value == 2 then
+        if frame >= #values then
+            currentAnim = GetString(key..".controls.animation")
+            SetInt(key..".controls.change", 0)
+        end
+
+    --3: change after current frame
+    elseif value == 3 then
+        if frametimer == 0 then
+            currentAnim = GetString(key..".controls.animation")
+            SetInt(key..".controls.change", 0)
+        end
+    end
+
+    --if changed animation
+    if GetInt(key..".controls.change") == 0 then
+        if currentAnim ~= "none" then
+            values = DeRegisterAnimation(currentAnim)
+        end
+
+        DebugPrint(name.." changed animation to "..currentAnim)
+    end
+end
 
 
 function animate(currentKeyframe, frametimer, dt, values, rig, repeating)
