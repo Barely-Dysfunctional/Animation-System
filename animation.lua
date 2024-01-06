@@ -1,4 +1,5 @@
 name = GetStringParam("name", "animation")
+editMode = GetBoolParam("editMode", false)
 
 function init()
 
@@ -6,7 +7,6 @@ function init()
 
     keyframes = FindBodies("frame")
     for framenum, keyframe in ipairs(keyframes) do
-        --DebugPrint(keyframe)
 
         time = GetTagValue(keyframe, "time")
         if time == "" then
@@ -16,13 +16,11 @@ function init()
         end
 
         values[framenum] = {time, {}}
-        --DebugPrint("time: "..time)
 
         framebodies = FindFrameBodies(keyframe)
         for bodynum, body in ipairs(framebodies) do
 
             id = tonumber(GetTagValue(body, "id"))
-            --DebugPrint("id: "..id)
 
             posEasing = GetTagValue(body, "posease")
             if posEasing == "" then
@@ -37,8 +35,9 @@ function init()
             trans = TransformToLocalTransform(GetBodyTransform(keyframe), GetBodyTransform(body))
             values[framenum][2][id] = {posEasing, rotEasing, trans}
 
-            --DebugPrint(TransformStr(trans))
-            Delete(body)
+            if not editMode then
+                Delete(body)
+            end
         end
     end
     
@@ -51,10 +50,12 @@ function RegisterAnimation(values, name)
         key = key.."(2)"
     end
 
+    totaltime = 0
     for framenum, frame in ipairs(values) do
         framekey = key..".frames.frame"..framenum
 
         time = frame[1]
+        totaltime = totaltime + time
         SetFloat(framekey..".time", time)
 
         for id, bodyValues in ipairs(frame[2]) do
@@ -73,6 +74,8 @@ function RegisterAnimation(values, name)
             SetFloat(bodykey..".qw", trans.rot[4])
         end
     end
+
+    SetFloat(key..".time", totaltime)
 end
 
 function FindFrameBodies(framebody)
